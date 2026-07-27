@@ -4,24 +4,18 @@ Run locally:   uvicorn app.main:app --reload
 Production:    uvicorn app.main:app --host 0.0.0.0 --port $PORT
 """
 from fastapi import FastAPI, Request
-<<<<<<< HEAD
 from fastapi.exceptions import RequestValidationError
-=======
->>>>>>> origin/main
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .config import get_settings
-<<<<<<< HEAD
 from .routers import catalog, generations, mobile, social, uploads
 from .security import AuthError
-=======
-from .routers import catalog, generations, uploads
->>>>>>> origin/main
 
 settings = get_settings()
 
@@ -44,7 +38,6 @@ app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
 
-<<<<<<< HEAD
 # Hard body-size ceiling: reject before anything reads the stream into memory.
 # Covers video uploads (max_video_upload_mb) plus a small overhead for fields.
 MAX_REQUEST_BYTES = (settings.max_video_upload_mb + 5) * 1024 * 1024
@@ -63,8 +56,6 @@ async def limit_body_size(request: Request, call_next):
     return await call_next(request)
 
 
-=======
->>>>>>> origin/main
 @app.exception_handler(RateLimitExceeded)
 def rate_limited(request: Request, exc: RateLimitExceeded):
     return JSONResponse(status_code=429,
@@ -78,7 +69,6 @@ def unhandled(request: Request, exc: Exception):
                         content={"detail": "Internal server error"})
 
 
-<<<<<<< HEAD
 @app.exception_handler(AuthError)
 def auth_error(request: Request, exc: AuthError):
     return JSONResponse(status_code=401, content={"error": str(exc)})
@@ -96,9 +86,6 @@ def validation_error(request: Request, exc: RequestValidationError):
     return JSONResponse(status_code=422, content={"error": msg})
 
 
-from starlette.exceptions import HTTPException as StarletteHTTPException
-
-
 @app.exception_handler(StarletteHTTPException)
 def http_error(request: Request, exc: StarletteHTTPException):
     # Normalize any raise HTTPException(detail=...) to the app's {"error":...} shape.
@@ -108,8 +95,6 @@ def http_error(request: Request, exc: StarletteHTTPException):
 
 app.include_router(mobile.router)
 app.include_router(social.router)
-=======
->>>>>>> origin/main
 app.include_router(catalog.router)
 app.include_router(uploads.router)
 app.include_router(generations.router)
