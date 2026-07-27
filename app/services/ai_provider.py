@@ -82,16 +82,21 @@ def extract_image_url(result: dict) -> str | None:
     imgs = result.get("images")
     if isinstance(imgs, list) and imgs and isinstance(imgs[0], dict):
         return imgs[0].get("url")
+<<<<<<< HEAD
     vids = result.get("videos")
     if isinstance(vids, list) and vids and isinstance(vids[0], dict):
         return vids[0].get("url")
     for k in ("image", "output", "video"):
+=======
+    for k in ("image", "output"):
+>>>>>>> origin/main
         v = result.get(k)
         if isinstance(v, dict) and v.get("url"):
             return v["url"]
         if isinstance(v, str) and v.startswith("http"):
             return v
     return None
+<<<<<<< HEAD
 
 
 def fetch_result_for(remote_model: str, provider_job_id: str):
@@ -110,3 +115,5 @@ def fetch_result_for(remote_model: str, provider_job_id: str):
         if r.status_code >= 400:
             return "failed", None, "result fetch failed"
         return "completed", extract_image_url(r.json()), None
+=======
+>>>>>>> origin/main

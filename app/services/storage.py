@@ -13,8 +13,12 @@ from ..config import get_settings
 
 settings = get_settings()
 
+<<<<<<< HEAD
 _EXT = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
         "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov"}
+=======
+_EXT = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+>>>>>>> origin/main
 
 
 def _client():
@@ -40,7 +44,11 @@ def upload_bytes(folder: str, data: bytes, content_type: str) -> tuple[str, str]
     return key, public_url(key)
 
 
+<<<<<<< HEAD
 def save_remote_media(url: str, folder: str = "generated") -> str:
+=======
+def save_remote_image(url: str, folder: str = "generated") -> str:
+>>>>>>> origin/main
     """Download an image the AI produced and persist it to R2. Returns public URL."""
     with httpx.Client(timeout=60) as cx:
         r = cx.get(url)
@@ -48,7 +56,10 @@ def save_remote_media(url: str, folder: str = "generated") -> str:
         ctype = r.headers.get("content-type", "image/png").split(";")[0]
         _key, purl = upload_bytes(folder, r.content, ctype)
         return purl
+<<<<<<< HEAD
 
 
 # backwards-compat alias (v1 routes)
 save_remote_image = save_remote_media
+=======
+>>>>>>> origin/main

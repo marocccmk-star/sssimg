@@ -13,7 +13,11 @@ from sqlalchemy.orm import Session
 from ..config import get_settings
 from ..database import get_db
 from ..deps import Pagination, get_current_user
+<<<<<<< HEAD
 from ..models import GenerationJob, GenerationStatus, GenJob, Template
+=======
+from ..models import GenerationJob, GenerationStatus, Template
+>>>>>>> origin/main
 from ..schemas import GenerationCreate, GenerationOut, Page
 from ..services import ai_provider, storage
 
@@ -117,6 +121,7 @@ async def ai_webhook(request: Request, db: Session = Depends(get_db)):
     job = db.scalar(select(GenerationJob)
                     .where(GenerationJob.provider_job_id == str(request_id)))
     if not job:
+<<<<<<< HEAD
         # maybe it's a mobile (multi-model) job
         mjob = db.scalar(select(GenJob)
                          .where(GenJob.provider_job_id == str(request_id)))
@@ -135,6 +140,8 @@ async def ai_webhook(request: Request, db: Session = Depends(get_db)):
                 mjob.error_message = str(body.get("error") or f"provider status {status}")[:500]
             mjob.completed_at = datetime.now(timezone.utc)
             db.commit()
+=======
+>>>>>>> origin/main
         return {"ok": True}                     # unknown job → ack, don't retry
     if job.status in (GenerationStatus.completed, GenerationStatus.failed):
         return {"ok": True}                     # idempotent

@@ -3,7 +3,11 @@ Run once:  python seed.py
 Replace the placeholder URLs with real R2 objects under templates/.
 """
 from app.database import SessionLocal
+<<<<<<< HEAD
 from app.models import Category, FeedPost, Template
+=======
+from app.models import Category, Template
+>>>>>>> origin/main
 
 db = SessionLocal()
 if not db.query(Category).count():
@@ -27,6 +31,7 @@ if not db.query(Category).count():
                  sort_order=1),
     ])
     db.commit()
+<<<<<<< HEAD
     print("seeded catalog.")
 if not db.query(FeedPost).count():
     db.add_all([
@@ -43,6 +48,9 @@ if not db.query(FeedPost).count():
     ])
     db.commit()
     print("seeded feed.")
+=======
+    print("seeded.")
+>>>>>>> origin/main
 else:
     print("already seeded.")
 db.close()

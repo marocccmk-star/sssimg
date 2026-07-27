@@ -3,7 +3,11 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import (Boolean, DateTime, Enum, ForeignKey, Integer, String,
+<<<<<<< HEAD
                         Text, UniqueConstraint, func)
+=======
+                        Text, func)
+>>>>>>> origin/main
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -85,6 +89,7 @@ class GenerationJob(Base):
 
     user = relationship("User", back_populates="generations")
     template = relationship("Template")
+<<<<<<< HEAD
 
 
 # ===========================================================================
@@ -220,3 +225,5 @@ class PostComment(Base):
                                                  server_default=func.now())
 
     author = relationship("AppUser")
+=======
+>>>>>>> origin/main
