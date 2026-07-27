@@ -3,7 +3,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import (Boolean, DateTime, Enum, ForeignKey, Integer, String,
-                        Text, func)
+                        Text, UniqueConstraint, func)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .database import Base
@@ -190,6 +190,9 @@ class UserPost(Base):
 
 class PostLike(Base):
     __tablename__ = "post_likes"
+    __table_args__ = (UniqueConstraint("post_id", "user_id",
+                                       name="uq_post_likes_post_user"),)
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     post_id: Mapped[int] = mapped_column(ForeignKey("user_posts.id"), index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("app_users.id"), index=True)
@@ -199,6 +202,9 @@ class PostLike(Base):
 
 class PostSave(Base):
     __tablename__ = "post_saves"
+    __table_args__ = (UniqueConstraint("post_id", "user_id",
+                                       name="uq_post_saves_post_user"),)
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     post_id: Mapped[int] = mapped_column(ForeignKey("user_posts.id"), index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("app_users.id"), index=True)

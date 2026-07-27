@@ -7,3 +7,10 @@ venv/
 *.egg-info/
 dist/
 build/
+=======
+venv/
+venvsource/
+.env
+__pycache__/
+*.pyc
+dev.db
