@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     cors_origins: str = "*"
     max_upload_mb: int = 15
 
-<<<<<<< HEAD
     # provider keys (all optional; a model whose provider key is missing
     # returns a clean error instead of crashing)
     google_api_key: str = ""
@@ -37,8 +36,6 @@ class Settings(BaseSettings):
     max_video_upload_mb: int = 120
     allow_anon_test: bool = False
 
-=======
->>>>>>> origin/main
     class Config:
         env_file = ".env"
 
