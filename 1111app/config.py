@@ -22,9 +22,7 @@ class Settings(BaseSettings):
     fal_model: str = ""
 
     # app
-    # Public HTTPS URL of THIS backend (used for webhooks and for building
-    # media URLs when local storage is active).
-    app_base_url: str = "https://editimg.onrender.com"
+    app_base_url: str = ""        # public https URL of this backend (webhooks)
     cors_origins: str = "*"
     max_upload_mb: int = 15
 
@@ -37,16 +35,6 @@ class Settings(BaseSettings):
     model_routes: str = ""
     max_video_upload_mb: int = 120
     allow_anon_test: bool = False
-
-    # storage: "auto" uses R2 when its keys are set, else local disk
-    storage_backend: str = "auto"          # auto | r2 | local
-    local_media_dir: str = "media"         # served at /media/*
-
-    # imaging
-    enable_rembg: bool = True
-    # u2netp (~5 MB) fits small dynos; u2net (~176 MB) is sharper but heavy
-    rembg_model: str = "u2netp"
-    max_edit_pixels: int = 4_000_000       # downscale bigger inputs first
 
     class Config:
         env_file = ".env"

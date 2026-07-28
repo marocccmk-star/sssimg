@@ -6,15 +6,13 @@ Production:    uvicorn app.main:app --host 0.0.0.0 --port $PORT
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
 from .config import get_settings
-from .services import storage
-from .routers import catalog, edit, generations, mobile, social, uploads
+from .routers import catalog, generations, mobile, social, uploads
 from .security import AuthError
 
 settings = get_settings()
@@ -56,14 +54,6 @@ def auth_error(request: Request, exc: AuthError):
     return JSONResponse(status_code=401, content={"error": str(exc)})
 
 
-# Serve locally-stored media at /media/* when R2 isn't configured, so the API
-# is usable immediately. (Render's disk is ephemeral — use R2 for anything
-# that must survive a restart.)
-if not storage.use_r2():
-    app.mount("/media", StaticFiles(directory=str(storage.media_root())),
-              name="media")
-
-app.include_router(edit.router)
 app.include_router(mobile.router)
 app.include_router(social.router)
 app.include_router(catalog.router)
