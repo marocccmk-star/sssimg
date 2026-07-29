@@ -12,21 +12,12 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
-import logging
-
 from .config import get_settings
 from .services import storage
-from .routers import (catalog, diag, edit, generations, mobile, social,
-                      uploads)
+from .routers import catalog, edit, generations, mobile, social, uploads
 from .security import AuthError
 
 settings = get_settings()
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-)
-logger = logging.getLogger("editimg")
 
 app = FastAPI(title="AI Photo Backend", version="1.0.0",
               docs_url="/docs", redoc_url=None)
@@ -50,21 +41,14 @@ app.add_middleware(SlowAPIMiddleware)
 @app.exception_handler(RateLimitExceeded)
 def rate_limited(request: Request, exc: RateLimitExceeded):
     return JSONResponse(status_code=429,
-                        content={"error": "Too many requests, slow down."})
+                        content={"detail": "Too many requests, slow down."})
 
 
-# --- Secure error handling ---
-# The client never sees internals, but the traceback IS logged so it shows up
-# in `render logs` / stdout. (Previously this swallowed errors silently, which
-# made 500s impossible to diagnose.)
+# --- Secure error handling: never leak internals in 500s ---
 @app.exception_handler(Exception)
 def unhandled(request: Request, exc: Exception):
-    # exc_info=exc is required here: inside a FastAPI exception handler there is
-    # no ambient exception context, so logger.exception() alone logs "None".
-    logger.error("Unhandled error on %s %s", request.method, request.url.path,
-                 exc_info=exc)
     return JSONResponse(status_code=500,
-                        content={"error": "Internal server error"})
+                        content={"detail": "Internal server error"})
 
 
 @app.exception_handler(AuthError)
@@ -79,28 +63,9 @@ if not storage.use_r2():
     app.mount("/media", StaticFiles(directory=str(storage.media_root())),
               name="media")
 
-app.include_router(diag.router)
 app.include_router(edit.router)
 app.include_router(mobile.router)
 app.include_router(social.router)
 app.include_router(catalog.router)
 app.include_router(uploads.router)
 app.include_router(generations.router)
-
-
-@app.on_event("startup")
-def _ensure_schema() -> None:
-    """Create any missing tables at boot.
-
-    Alembic remains the source of truth for migrations, but this safety net
-    means a fresh deploy works even when `alembic upgrade head` hasn't run —
-    which is the usual cause of 500s on the very first upload.
-    """
-    try:
-        from .database import Base, engine
-        from . import models  # noqa: F401  (registers the tables)
-        Base.metadata.create_all(bind=engine)
-        logger.info("schema check complete (%d tables known)",
-                    len(Base.metadata.sorted_tables))
-    except Exception:
-        logger.exception("could not verify/create database schema")
